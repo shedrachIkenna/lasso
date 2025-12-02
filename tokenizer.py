@@ -16,3 +16,5 @@ from typing import (
     cast,
 )
 
+import tiktoken # OpenAI's fast BPE tokenizer implementation in Rust 
+
