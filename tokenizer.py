@@ -42,5 +42,23 @@ def get_reserved_special_tokens(name, count, start_index=0):
     start_index: 
         start index for the sequence of reserved special tokens 
     """
+    return [f"<|{name}_reserved_special_token_{i}|>" for i in range(start_index, start_index + count)]
+
+LLAMA4_TEXT_POST_TRAIN_SPECIAL_TOKENS = [
+    "<|header_start|>", 
+    "<|header_end|>",
+    "<|eom|>",
+    "<|eot|>",
+    "<|step|>",
+    "<|text_post_train_reserved_special_token_0|>",
+    "<|text_post_train_reserved_special_token_1|>",
+    "<|text_post_train_reserved_special_token_2|>",
+    "<|text_post_train_reserved_special_token_3|>",
+    "<|text_post_train_reserved_special_token_4|>",
+    "<|text_post_train_reserved_special_token_5|>",
+    "<|python_start|>",
+    "<|python_end|>",
+    "<|finetune_right_pad|>",
+] + get_reserved_special_tokens("text_post_train", 61, 8)  # <|text_post_train_reserved_special_token_8|>, ..., <|text_post_train_reserved_special_token_68|>
 
 
