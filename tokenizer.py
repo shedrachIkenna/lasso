@@ -78,3 +78,17 @@ LLAMA4_VISION_SPECIAL_TOKENS = [
     "<|patch|>",
 ] + get_reserved_special_tokens("vision", 1041, 7)  # <|vision_reserved_special_token_7|>, ..., <|vision_reserved_special_token_1047|>
 
+
+LLAMA4_REASONING_SPECIAL_TOKENS = [
+    "<|reasoning_reserved_special_token_0|>",
+    "<|reasoning_reserved_special_token_1|>",
+    "<|reasoning_reserved_special_token_2|>",
+    "<|reasoning_reserved_special_token_3|>",
+    "<|reasoning_reserved_special_token_4|>",
+    "<|reasoning_reserved_special_token_5|>",
+    "<|reasoning_reserved_special_token_6|>",
+    "<|reasoning_reserved_special_token_7|>",
+    "<|reasoning_thinking_start|>",
+    "<|reasoning_thinking_end|>",
+]
+
