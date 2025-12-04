@@ -29,6 +29,18 @@ MAX_NO_WHITESPACES_CHARS = 25_000 # Maximum consecutive whitespace or non-whites
 
 _INSTANCE = None # Global variable for singleton pattern - stores and caches one tokenizer instance to avoid reloading 
 
+def get_reserved_special_tokens(name, count, start_index=0):
+    """
+    Function to generate a list of reserved special tokens 
 
+    name:
+        category name of the reserved special token 
+
+    count: 
+        How many of these reserved special tokens to generate 
+    
+    start_index: 
+        start index for the sequence of reserved special tokens 
+    """
 
 
