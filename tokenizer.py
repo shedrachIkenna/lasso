@@ -92,3 +92,15 @@ LLAMA4_REASONING_SPECIAL_TOKENS = [
     "<|reasoning_thinking_end|>",
 ]
 
+# Concatenate all the special tokens into one master special token list 
+LLAMA4_SPECIAL_TOKENS = (
+    LLAMA4_TEXT_POST_TRAIN_SPECIAL_TOKENS + LLAMA4_VISION_SPECIAL_TOKENS + LLAMA4_REASONING_SPECIAL_TOKENS
+)
+
+BASIC_SPECIAL_TOKENS = [
+    "<|begin_of_text|>",
+    "<|end_of_text|>",
+    "<|fim_prefix|>",
+    "<|fim_middle|>",
+    "<|fim_suffix|>",
+]
