@@ -62,3 +62,19 @@ LLAMA4_TEXT_POST_TRAIN_SPECIAL_TOKENS = [
 ] + get_reserved_special_tokens("text_post_train", 61, 8)  # <|text_post_train_reserved_special_token_8|>, ..., <|text_post_train_reserved_special_token_68|>
 
 
+LLAMA4_VISION_SPECIAL_TOKENS = [
+    "<|image_start|>",
+    "<|image_end|>",
+    "<|vision_reserved_special_token_0|>",
+    "<|vision_reserved_special_token_1|>",
+    "<|tile_x_separator|>",
+    "<|tile_y_separator|>",
+    "<|vision_reserved_special_token_2|>",
+    "<|vision_reserved_special_token_3|>",
+    "<|vision_reserved_special_token_4|>",
+    "<|vision_reserved_special_token_5|>",
+    "<|image|>",
+    "<|vision_reserved_special_token_6|>",
+    "<|patch|>",
+] + get_reserved_special_tokens("vision", 1041, 7)  # <|vision_reserved_special_token_7|>, ..., <|vision_reserved_special_token_1047|>
+
