@@ -125,3 +125,78 @@ class Tokenizer:
 
         return _INSTANCE
     
+    def __init__(self, model_path: Path):
+        """
+        Constructor method that initialize the Tokenizer with the tiktoken model 
+
+        Args:
+            model_path (Path): path to the tiktoken model file 
+        """
+        if not model_path.exists(): # check if the model file exists 
+            # if not, raise an error
+            raise FileNotFoundError(f"Tokenizer model file not found: {model_path}") 
+        
+        # Load the BPE merge rules from the model file 
+        mergeable_ranks = load_bpe_file(model_path) 
+
+        # count how many base tokens 
+        num_base_tokens = len(mergeable_ranks)
+
+        # combine the basic special tokens and Llama 4 special tokens 
+        special_tokens = BASIC_SPECIAL_TOKENS + LLAMA4_SPECIAL_TOKENS
+
+        # remove duplicates if exists 
+        assert len(set(special_tokens)) == len(special_tokens)
+
+        # verify we haven't exceeded the 2,048 token budget, (1,144 <= 2,048) - we are good 
+        assert len(special_tokens) <= self.num_reserved_special_tokens
+
+        # create remaining special tokens. Range is 2,048 - 1,144 = 904 tokens, numbered 0-903
+        reserved_tokens = [
+            f"<|reserved_special_token_{i}|>" for i in range(self.num_reserved_special_tokens - len(special_tokens))
+        ]
+
+        # add reserved tokens to special token list to have exactly 2,048 tokens 
+        special_tokens = special_tokens + reserved_tokens
+
+        # create dictionary mapping each special token string to its ID, IDs start after base tokens 
+        # if base tokens ends at 199,999, special tokens are 200,000 - 202,047.
+        self.special_tokens = {token: num_base_tokens + i for i, token in enumerate(special_tokens)}
+
+        # create the tiktoken object 
+        self.model = tiktoken.Encoding(
+            name=model_path.name, # name 
+            pat_str=self.O200K_PATTERN, # regex pattern for splitting 
+            mergeable_ranks=mergeable_ranks # bpe merge rules loaded from file 
+            special_tokens=self.special_tokens # special tokens 
+        )
+        # get the total vocabulary size 
+        self.n_words: int = num_base_tokens + len(special_tokens)
+
+        # get the ID for beginning of sequence token 
+        self.bos_id: int = self.special_tokens["<|begin_of_text|>"]
+
+        # Get the ID for end of sequence token  
+        self.eos_id: int = self.special_tokens["<|end_of_text|>"]
+
+        # Get the ID of padding-token (used for making sequence same length)
+        self.pad_id: int = self.special_tokens["<|finetune_right_pad|>"]
+        
+        # Get the ID for end-of-turn token 
+        self.eot_id: int = self.special_tokens["<|eot|>"]
+
+        # get the ID for end of message token 
+        self.eom_id: int = self.special_tokens["<|eom|>"]
+
+        # Get the ids for reasoning/thinking boundaries 
+        self.thinking_start_id: int = self.special_tokens["<|reasoning_thinking_start|>"]
+        self.thinking_end_id: int = self.special_tokens["<|reasoning_thinking_end|>"]
+
+        # Create list of tokens that should stop generation (when model should stop producing text)
+        self.stop_tokens = [
+            self.eos_id,
+            self.special_tokens["<|eom|>"],
+            self.special_tokens["<|eot|>"],
+        ]
+
+        
