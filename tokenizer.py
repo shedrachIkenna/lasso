@@ -104,3 +104,24 @@ BASIC_SPECIAL_TOKENS = [
     "<|fim_middle|>",
     "<|fim_suffix|>",
 ]
+
+
+class Tokenizer:
+    """
+    Tokenize, encode and decode text using the Tiktoken tokenizer 
+    """
+    special_tokens: Dict[str, int] # we will have a dictionary of special tokens mapped to their int IDs
+
+    num_reserved_special_tokens = 2048 # slots reserved for special tokens 
+
+    # O200k Regex pattern for splitting text before tokenization 
+    O200K_PATTERN = r"""[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]*[\p{Ll}\p{Lm}\p{Lo}\p{M}]+(?i:'s|'t|'re|'ve|'m|'ll|'d)?|[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]+[\p{Ll}\p{Lm}\p{Lo}\p{M}]*(?i:'s|'t|'re|'ve|'m|'ll|'d)?|\p{N}{1,3}| ?[^\s\p{L}\p{N}]+[\r\n/]*|\s*[\r\n]+|\s+(?!\S)|\s+"""
+
+    @classmethod
+    def get_instance(cls):
+        global _INSTANCE
+        if _INSTANCE is None:
+            _INSTANCE = Tokenizer(Path(__file__).parent / "tokenizer.model")
+
+        return _INSTANCE
+    
