@@ -281,6 +281,31 @@ class Tokenizer:
         Result: 
             substrings <= max_consecutive_slice_len 
         """
+        current_slice_len = 0 # counter for how many consecutive chars of current type we've see 
 
-        
+        # Track whether we're currently in a whitespace run. Check first character if s: str isn't empty 
+        current_slice_is_space = s[0].isspace() if len(s) > 0 else False 
+
+        # track where the current substring started (reference to index in original string)
+        slice_start = 0 
+
+        for i in range(len(s)): # loop through each character position in the string 
+            is_now_space = s[i].isspace() # Checks if current character is whitespace
+            
+            if current_slice_is_space ^ is_now_space: # XOR operation: True if one is True and the other is False. This means we've switched from whitespace to non-whitespace or vice versa.
+                current_slice_len = 1 # Reset counter to 1 (we're starting a new run of a different type).
+                current_slice_is_space = is_now_space # Update what type of run we're in now.
+            else: # else, We're still in the same type of run. either a whitespace run or character run 
+                current_slice_len += 1 # Increment the counter
+
+                if current_slice_len > max_consecutive_slice_len: # Check if we've exceeded the limit
+                    yield s[slice_start:i] # Yield (return from generator) the substring from start to current position (not including current position)
+                    
+                    slice_start = i # Update start position to current position (start a new substring here)
+                    current_slice_len = 1
+        yield s[slice_start:] # After the loop, yield the final substring (from last start position to end of string).
+
+
+
+
 
