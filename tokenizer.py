@@ -269,4 +269,18 @@ class Tokenizer:
         return self.model.decode(cast(List[int], t))
 
 
+    @staticmethod # Below method is a static method 
+    def _split_whitespaces_or_nonwhitespaces(s: str, max_consecutive_slice_len: int) -> Iterator[str]:
+        """
+        Split strings with too many consecutive whitespace or non-whitespace characters 
+
+        Args: 
+            s: string to split 
+            max_consecutive_slice_len 
+        
+        Result: 
+            substrings <= max_consecutive_slice_len 
+        """
+
+        
 
