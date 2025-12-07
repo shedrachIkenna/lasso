@@ -254,6 +254,19 @@ class Tokenizer:
             t.append(self.eos_id) # If eos=True, append the end-of-sequence token ID to the end of list.
         
         return t
+    
+    def decode(self, t: Sequence[int]) -> str: 
+        """
+        Decodes the list of token IDs into string 
+
+        Args: 
+            t (List[int]): The list of token IDs to be decoded 
+        
+        Returns: 
+            str: The decoded string 
+        """
+
+        return self.model.decode(cast(List[int], t))
 
 
 
