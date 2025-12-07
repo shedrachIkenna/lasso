@@ -167,7 +167,7 @@ class Tokenizer:
         self.model = tiktoken.Encoding(
             name=model_path.name, # name 
             pat_str=self.O200K_PATTERN, # regex pattern for splitting 
-            mergeable_ranks=mergeable_ranks # bpe merge rules loaded from file 
+            mergeable_ranks=mergeable_ranks, # bpe merge rules loaded from file 
             special_tokens=self.special_tokens # special tokens 
         )
         # get the total vocabulary size 
@@ -237,6 +237,23 @@ class Tokenizer:
             for substr in self._split_whitespaces_or_nonwhitespaces(s[i: i + TIKTOKEN_MAX_ENCODE_CHARS], MAX_NO_WHITESPACES_CHARS) 
         )
 
+        t: List[int] = [] # list to store token IDs 
+        for substr in substrs: 
+            t.extend(
+                self.model.encode(
+                    substr,
+                    allowed_special=allowed_special,
+                    disallowed_special=disallowed_special
+                )
+            )
         
+        if bos: 
+            t.insert(0, self.bos_id) # If bos=True, insert the beginning-of-sequence token ID at position 0 (start of list).
+        
+        if eos: 
+            t.append(self.eos_id) # If eos=True, append the end-of-sequence token ID to the end of list.
+        
+        return t
+
 
 
