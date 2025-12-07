@@ -217,9 +217,26 @@ class Tokenizer:
             Setting `disallowed_special` to () will cause all text corresponding
             to special tokens to be encoded as natural text (insteading of raising
             an error).
-            
+
             Setting `allowed_special` to "all" will treat all text corresponding
             to special tokens to be encoded as special tokens.
         """
+
+        if allowed_special == None: 
+            allowed_special = set() # no special tokens allowed 
+
+        assert type(s) is str # verify input is actually a string 
+
+        # Generator (lazy iterator) to get substrings 
+        substrs = (
+            substr 
+            for i in range(0, len(s), TIKTOKEN_MAX_ENCODE_CHARS) # Loop through the string in chunks of 400,000 characters. i will be 0, 400000, 800000, etc.
+            # For each 400k chunk, further split it using the private _split_whitespaces_or_nonwhitespaces function if it contains 
+            # More than 25,000 consecutive whitespace characters, OR
+            # More than 25,000 consecutive non-whitespace characters
+            for substr in self._split_whitespaces_or_nonwhitespaces(s[i: i + TIKTOKEN_MAX_ENCODE_CHARS], MAX_NO_WHITESPACES_CHARS) 
+        )
+
+        
 
 
