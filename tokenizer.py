@@ -48,7 +48,7 @@ LLAMA4_TEXT_POST_TRAIN_SPECIAL_TOKENS = [
     "<|header_start|>", 
     "<|header_end|>",
     "<|eom|>",
-    "<|eot|>",
+    "<|eot|>", 
     "<|step|>",
     "<|text_post_train_reserved_special_token_0|>",
     "<|text_post_train_reserved_special_token_1|>",
@@ -192,11 +192,34 @@ class Tokenizer:
         self.thinking_start_id: int = self.special_tokens["<|reasoning_thinking_start|>"]
         self.thinking_end_id: int = self.special_tokens["<|reasoning_thinking_end|>"]
 
-        # Create list of tokens that should stop generation (when model should stop producing text)
+        # list of tokens that should stop generation (when model should stop producing text)
         self.stop_tokens = [
-            self.eos_id,
-            self.special_tokens["<|eom|>"],
-            self.special_tokens["<|eot|>"],
+            self.eos_id, # end of sequence token 
+            self.special_tokens["<|eom|>"], # end of message token
+            self.special_tokens["<|eot|>"], # end of turn token 
         ]
 
+    def encode(self, s: str, *, bos: bool, eos: bool, allowed_special: Optional[Union[Literal["all"], AbstractSet[str]]] = None, disallowed_special: Union[Literal["all"], Collection[str]] = ()) -> List:
+        """
+        Docstring for encode
         
+        Args: 
+            s (str): The input string to be encoded 
+            bos (bool): Whether to prepend the beginning of sequence token 
+            eos (bool): Whether to append the end of sequence token 
+            allowed_special ("all"|set[str]): allowed special tokens in s (str)
+            disallowed_special ("all"|set[str]): special tokens that raise an error when in s (str)
+        
+        Returns: 
+            list[int]: A list of token IDs 
+
+        By default, setting disallowed_special=() encodes a string by ignoring special tokens. Specifically:
+            Setting `disallowed_special` to () will cause all text corresponding
+            to special tokens to be encoded as natural text (insteading of raising
+            an error).
+            
+            Setting `allowed_special` to "all" will treat all text corresponding
+            to special tokens to be encoded as special tokens.
+        """
+
+
