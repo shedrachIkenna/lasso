@@ -17,3 +17,7 @@ class RMSNorm(nn.Module):
 
     def forward(self, x):
         return rmsnorm(x, self.eps) * self.weight
+    
+
+def apply_scaling(freq: torch.Tensor, scale_factor: float, high_freq_factor: float):
+    
