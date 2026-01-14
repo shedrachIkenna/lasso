@@ -23,3 +23,7 @@ def apply_scaling(freq: torch.Tensor, scale_factor: float, high_freq_factor: flo
     """
     Increase the context window of the model 
     """
+    low_freq_factor = 1 
+    old_context_len = 8192 # original context limit defined by llama devs 
+    low_freq_wavelen = old_context_len / low_freq_factor # = 8192. 
+    high_freq_wavelen = old_context_len / high_freq_factor 
