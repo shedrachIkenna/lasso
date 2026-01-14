@@ -20,4 +20,6 @@ class RMSNorm(nn.Module):
     
 
 def apply_scaling(freq: torch.Tensor, scale_factor: float, high_freq_factor: float):
-    
+    """
+    Increase the context window of the model 
+    """
