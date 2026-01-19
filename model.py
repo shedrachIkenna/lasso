@@ -36,7 +36,7 @@ def apply_scaling(freqs: torch.Tensor, scale_factor: float, high_freq_factor: fl
         elif wavelen > low_freq_wavelen: 
             new_freqs.append(freq / scale_factor)
         else: 
-            assert low_freq_wavelen != high_freq_wavelen
+            assert low_freq_wavelen != high_freq_wavelen # safety check to avoid ZeroDivisionError in smooth calculation 
             smooth = (old_context_len / wavelen - low_freq_factor) / high_freq_factor - low_freq_factor
             new_freqs.append((1 - smooth) * freq / scale_factor + smooth * freq)
     
