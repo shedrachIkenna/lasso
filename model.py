@@ -19,11 +19,26 @@ class RMSNorm(nn.Module):
         return rmsnorm(x, self.eps) * self.weight
     
 
-def apply_scaling(freq: torch.Tensor, scale_factor: float, high_freq_factor: float):
+def apply_scaling(freqs: torch.Tensor, scale_factor: float, high_freq_factor: float):
     """
     Increase the context window of the model 
     """
-    low_freq_factor = 1 
+    low_freq_factor = 1
     old_context_len = 8192 # original context limit defined by llama devs 
     low_freq_wavelen = old_context_len / low_freq_factor # = 8192. 
     high_freq_wavelen = old_context_len / high_freq_factor 
+    new_freqs = [] # list to store new freqs 
+
+    for freq in freqs: 
+        wavelen = 2 * math.pi / freq
+        if wavelen < high_freq_wavelen: 
+            new_freqs.append(freq)
+        elif wavelen > low_freq_wavelen: 
+            new_freqs.append(freq / scale_factor)
+        else: 
+            assert low_freq_wavelen != high_freq_wavelen
+            smooth = (old_context_len / wavelen - low_freq_factor) / high_freq_factor - low_freq_factor
+            new_freqs.append((1 - smooth) * freq / scale_factor + smooth * freq)
+    
+    return torch.tensor(new_freqs, dtype=freqs.dtype, device=freqs.device)
+
