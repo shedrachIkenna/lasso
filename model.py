@@ -52,5 +52,6 @@ def precompute_freqs_cis(dim: int, end: int, theta: float, use_scaled: bool, sca
     # Positional angle calculation: t * freq. Multiplies every position t with its corresponding frequency freq 
     freqs = torch.outer(t, freqs)
 
-    
+    # Complex Rotation: e^(i*theta) = cos(theta) + i*sin(theta) (Euler's formula)
+    freqs_cis = torch.polar(torch.ones_like(freqs), freqs)
 
