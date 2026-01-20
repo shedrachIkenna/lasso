@@ -43,6 +43,10 @@ def apply_scaling(freqs: torch.Tensor, scale_factor: float, high_freq_factor: fl
     return torch.tensor(new_freqs, dtype=freqs.dtype, device=freqs.device)
 
 def precompute_freqs_cis(dim: int, end: int, theta: float, use_scaled: bool, scale_factor: float, high_freq_factor: float): 
+    # Base frequency calculation: inv_freq = 1 / theta^(2i/d) logic 
     freqs = 1.0 / (theta ** (torch.arange(0, dim, 2)[: (dim // 2)].float() / dim))
-    
+
+    # Generate list of increased position indexes (Assuming we are increasing context to 32k, t = [0, 1, 2, 3, ..., 31999])
+    t = torch.arange(end, device=freqs.device, dtype=torch.float32)
+
 
