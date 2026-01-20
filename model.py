@@ -49,4 +49,8 @@ def precompute_freqs_cis(dim: int, end: int, theta: float, use_scaled: bool, sca
     # Generate list of increased position indexes (Assuming we are increasing context to 32k, t = [0, 1, 2, 3, ..., 31999])
     t = torch.arange(end, device=freqs.device, dtype=torch.float32)
 
+    # Positional angle calculation: t * freq. Multiplies every position t with its corresponding frequency freq 
+    freqs = torch.outer(t, freqs)
+
+    
 
