@@ -42,3 +42,6 @@ def apply_scaling(freqs: torch.Tensor, scale_factor: float, high_freq_factor: fl
     
     return torch.tensor(new_freqs, dtype=freqs.dtype, device=freqs.device)
 
+def precompute_freqs_cis(dim: int, end: int, theta: float, use_scaled: bool, scale_factor: float, high_freq_factor: float): 
+    
+
