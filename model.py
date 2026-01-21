@@ -59,3 +59,22 @@ def precompute_freqs_cis(dim: int, end: int, theta: float, use_scaled: bool, sca
     # Complex Rotation: e^(i*theta) = cos(theta) + i*sin(theta) (Euler's formula)
     freqs_cis = torch.polar(torch.ones_like(freqs), freqs)
 
+    return freqs_cis
+
+def reshape_for_broadcast(freqs_cis: torch.Tensor, x: torch.Tensor):
+    # Get how many dimensions x has 
+    ndim = x.ndim
+
+    # check that x has at least 2 dimensions 
+    assert 0 <= 1 < ndim
+
+    # checks whether seq and D/2 in freqs_cis and x matches 
+    assert freqs_cis.shape == (x.shape[1], x.shape[-1])
+
+    # looks at x tensor, loops through each dimension
+    # replace all the dimensions with 1s except dimensions at index 1 and the last index (3) (dim - index - [0,1,2,3])
+    # Goal: reshape freqs_cis from [seq, D/2] to [1, seq, 1, D/2]
+    shape = [d if i == 1 or i == ndim - 1 else 1 for i, d in enumerate(x.shape)]
+
+    return freqs_cis.view(*shape)
+
