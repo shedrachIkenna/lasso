@@ -24,6 +24,18 @@ class ModelArgs(BaseModel): # inherite all the methods from the basemodel class 
     max_batch_size: int = 32 
     max_seq_len: int = 2048
 
-    
+    @model_validator(mode="after") # after means: verify the datatypes of the settings above are correct. AFTER that, run the function below 
+    # The function ensures that the settings specified above actually work together mathematically before the model starts building its neural network layers 
+    def validate(self) -> "ModelArgs":
+        assert self.n_kv_heads <= self.n_heads, f"n_kv_heads ({self.n_kv_heads}) must be <= n_heads ({self.n_heads})"
+        assert self.n_heads % self.n_kv_heads == 0, (
+            f"n_heads ({self.n_heads}) must be divisible by n_kv_heads ({self.n_kv_heads})"
+        )
+        assert self.dim % self.n_heads == 0, f"dim ({self.dim}) must be divisible by n_heads ({self.n_heads})"
 
-    
+        if self.use_scaled_rope:
+            if self.rope_scaling_factor is None:
+                self.rope_scaling_factor = 16
+            if self.rope_high_freq_factor is None:
+                self.rope_high_freq_factor = 1
+        return self 

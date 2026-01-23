@@ -4,6 +4,8 @@ import torch
 import torch.nn.functional as F 
 from torch import nn 
 
+from .args import ModelArgs
+
 def rmsnorm(x, eps):
     def _norm(y):
         return y * torch.rsqrt(y.pow(2).mean(-1, keepdim=True) + eps)
@@ -85,3 +87,8 @@ def apply_rotary_emb(xq: torch.Tensor, xk: torch.Tensor, freqs_cis: torch.Tensor
     xq_out = torch.view_as_real(xq_ * freqs_cis).flatten(3)
     xk_out = torch.view_as_real(xk_ * freqs_cis).flatten(3)
     return xq_out.type_as(xq), xk_out.type_as(xk)
+
+
+class Attention(nn.Module):
+    def __init__(self, args: ModelArgs, use_qk_norm: bool, use_rope: bool, add_bias: bool = False):
+        super().__init__()
