@@ -15,6 +15,13 @@ class ModelArgs(BaseModel): # inherite all the methods from the basemodel class 
     ffn_exp: Optional[float] = None 
     norm_eps: float = 1e-5
 
+    nope_layer_interval: Optional[int] = None  # No position encoding in every n layers
+    use_qk_norm: bool = False
+    # Set to True to enable inference-time temperature tuning (useful for very long context)
+    attn_temperature_tuning: bool = False
+    floor_scale: float = 8192.0
+    attn_scale: float = 0.1
+
     attention_chunk_size: Optional[int] = None 
     rope_theta: float = 500000
     use_scaled_rope: bool = False 
