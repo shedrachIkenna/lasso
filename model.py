@@ -4,6 +4,14 @@ import torch
 import torch.nn.functional as F 
 from torch import nn 
 
+import fairscale.nn.model_parallel.initialize as fs_init
+
+from fairscale.nn.model_parallel.layers import (
+    ColumnParallelLinear,
+    RowParallelLinear,
+    VocabParallelEmbedding,
+)
+
 from .args import ModelArgs
 
 def rmsnorm(x, eps):
