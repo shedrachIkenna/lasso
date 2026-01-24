@@ -122,3 +122,18 @@ class Attention(nn.Module):
             init_method=lambda x: x, 
         )
 
+        self.wk = ColumnParallelLinear(
+            args.dim, 
+            args.n_kv_heads * self.head_dim, 
+            bias=add_bias, 
+            gather_output=False, 
+            init_method= lambda x:x, 
+        )
+
+        self.wv = ColumnParallelLinear(
+            args.dim,
+            self.n_kv_heads * self.head_dim,
+            bias=add_bias,
+            gather_output=False,
+            init_method=lambda x: x,
+        )
