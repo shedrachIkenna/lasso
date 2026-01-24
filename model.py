@@ -108,10 +108,17 @@ class Attention(nn.Module):
 
         self.n_heads = args.n_heads
         self.n_kv_heads = args.n_heads if args.n_kv_heads is None else args.n_kv_heads
-        # world_size = fs_init.get_model_parallel_world_size() - returns the number of GPU's we have. Lets us splits model heads across GPUs - Model Parallelism 
-        world_size = 8 # random value 
+        world_size = fs_init.get_model_parallel_world_size() # returns the number of GPU's we have. Lets us splits model heads across GPUs - Model Parallelism 
         self.n_local_heads = args.n_heads // world_size # if we have 8 GPUs and 32 heads, each GPU will process 32/8 = 4 heads 
         self.n_local_kv_heads = args.n_kv_heads // world_size
         self.n_rep = self.n_local_heads // self.n_local_kv_heads 
         self.head_dim = args.dim // args.n_heads
+
+        self.wq = ColumnParallelLinear(
+            args.dim, 
+            args.n_heads * self.head_dim, 
+            bias=add_bias, 
+            gather_output=False, 
+            init_method=lambda x: x, 
+        )
 
