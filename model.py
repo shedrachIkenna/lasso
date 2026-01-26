@@ -137,3 +137,11 @@ class Attention(nn.Module):
             gather_output=False,
             init_method=lambda x: x,
         )
+
+        self.wo = RowParallelLinear(
+            args.n_heads * self.head_dim,
+            args.dim,
+            bias=add_bias,
+            input_is_parallel=True,
+            init_method=lambda x: x,
+        )
