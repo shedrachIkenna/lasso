@@ -1,5 +1,5 @@
 import math 
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, List
 import torch 
 import torch.nn.functional as F 
 from torch import nn 
@@ -162,4 +162,7 @@ class Attention(nn.Module):
 
         self.norm_eps = args.norm_eps
         self._register_load_state_dict_pre_hook(self.load_hook) # Responsible for loading weights correctly so that each GPU gets the appropriate size of weight matrix 
+
+    def load_hook(self, state_dict: Dict[str, Any], prefix: str, local_metadate: Dict[str, Any], strict: bool, 
+                  missing_keys: List[str], unexpected_key: List[str], error_msgs: List[str]) -> None: 
         
