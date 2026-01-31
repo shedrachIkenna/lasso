@@ -175,4 +175,12 @@ class Attention(nn.Module):
                           Unexpected keys: The weight file has numbers for a layer (e.g extra_layer.weight) but the code doesn't have that layer
             missing_keys/unexpected_keys: These are empty lists that the hook can fill if it notices something is wrong during inspection 
         """
+        if prefix + "wqkv.weight" in state_dict:
+            wqkv = state_dict.pop(prefix + "wqkv.weight")
+        # get how many rows belong to a single head
+        d, r = divmod(wqkv.shape[0], self.n_heads + 2 * self.n_kv_heads)
+
+        # split wqkv matrix into Query, key and value matrices 
+        wq, wk, wv = wqkv.split([d * self.n_heads, d * self.n_kv_heads, d * self.n_kv_heads], dim=0)
         
+            
