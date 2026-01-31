@@ -163,6 +163,16 @@ class Attention(nn.Module):
         self.norm_eps = args.norm_eps
         self._register_load_state_dict_pre_hook(self.load_hook) # Responsible for loading weights correctly so that each GPU gets the appropriate size of weight matrix 
 
-    def load_hook(self, state_dict: Dict[str, Any], prefix: str, local_metadate: Dict[str, Any], strict: bool, 
-                  missing_keys: List[str], unexpected_key: List[str], error_msgs: List[str]) -> None: 
+    def load_hook(self, state_dict: Dict[str, Any], prefix: str, local_metadate: Dict[str, Any], strict: bool, missing_keys: List[str], unexpected_key: List[str], error_msgs: List[str]) -> None: 
+        """
+        Loads pretrained weights from file (wqkv.weight)
+
+        Args: 
+            state_dict: dictionary containing all the weights in the file 
+            prefix: Points to exactly where an attention layer weight is (models usually have multiple attention layers)
+            strict (bool): if true, any tiny mismatch between code and weight file results to an error. 
+                example - Missing keys: The code has a layer (e.g. self.bias) but the weight file doesn't have any numbers for it 
+                          Unexpected keys: The weight file has numbers for a layer (e.g extra_layer.weight) but the code doesn't have that layer
+            missing_keys/unexpected_keys: These are empty lists that the hook can fill if it notices something is wrong during inspection 
+        """
         
