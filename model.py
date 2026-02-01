@@ -204,3 +204,10 @@ class Attention(nn.Module):
         xq = xq.view(bsz, seqlen, self.n_local_heads, self.head_dim)
         xk = xk.view(bsz, seqlen, self.n_local_kv_heads, self.head_dim)
         xv = xv.view(bsz, seqlen, self.n_local_kv_heads, self.head_dim)
+
+        if self.use_rope:
+            xq, xk = apply_rotary_emb(xq, xk, freqs_cis=freqs_cis)
+        
+        if self.use_qk_norm:
+            xq = rmsnorm(xq, self.norm_eps)
+            xk = rmsnorm(xk, self.norm_eps)
