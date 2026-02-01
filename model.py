@@ -194,4 +194,5 @@ class Attention(nn.Module):
 
 
     def forward(self, x: torch.Tensor, start_pos: int, freqs_cis: torch.Tensor, mask: Optional[torch.Tensor] = None):
-              
+        # bsz = batch_size, seqlen = sequence length, _ = dimension of each token
+        bsz, seqlen, _ = x.shape # tuple unpacking 
