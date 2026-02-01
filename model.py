@@ -196,3 +196,6 @@ class Attention(nn.Module):
     def forward(self, x: torch.Tensor, start_pos: int, freqs_cis: torch.Tensor, mask: Optional[torch.Tensor] = None):
         # bsz = batch_size, seqlen = sequence length, _ = dimension of each token
         bsz, seqlen, _ = x.shape # tuple unpacking 
+
+        # Project x into Query, Key and Value by doing a matrix multiplication of the wq, wk, wk pretrained weights with x 
+        xq, xk, xv = self.wq(x), self.wk(x), self.wv(x)
