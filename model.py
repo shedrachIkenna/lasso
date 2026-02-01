@@ -211,3 +211,17 @@ class Attention(nn.Module):
         if self.use_qk_norm:
             xq = rmsnorm(xq, self.norm_eps)
             xk = rmsnorm(xk, self.norm_eps)
+
+        # Handle situations when rope isn't used for positional encoding 
+        # Temperature is a list of logarithmic numbers (grows slowly) that gets multiplied with xq (makes the query xq sharper/ louder)
+        #    This enables the model to handle longer context - it magnifies the correct next word 
+        if self.attn_temperature_tuning and not self.use_rope:
+            # give every word(token) a numerical ID based on its place on the timeline 
+            seq_positions = torch.arange(start_pos, start_pos + seqlen, device=xq.device, dtype=torch.float32)
+            
+            # scale the attn_scale logarithmically 
+            attn_scales = torch.log(torch.floor((seq_positions + 1.0) / self.floor_scale) + 1.0) * self.attn_scale + 1.0 
+
+            # reshape for broadcasting [seqlen] -> [1, seqlen, 1, 1]
+            attn_scales = attn_scales.view(1, seqlen, 1, 1)
+            xq = xq * attn_scales
