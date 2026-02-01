@@ -177,10 +177,19 @@ class Attention(nn.Module):
         """
         if prefix + "wqkv.weight" in state_dict:
             wqkv = state_dict.pop(prefix + "wqkv.weight")
-        # get how many rows belong to a single head
-        d, r = divmod(wqkv.shape[0], self.n_heads + 2 * self.n_kv_heads)
+            # get how many rows belong to a single head
+            d, r = divmod(wqkv.shape[0], self.n_heads + 2 * self.n_kv_heads)
+            if r != 0:
+                raise ValueError(
+                    f"shape={tuple(wqkv.shape)} is not divisible by "
+                    f"n_heads ({self.n_heads}) + 2 * n_kv_heads ({self.n_kv_heads})"
+                )
+            # split wqkv matrix into Query, key and value matrices 
+            wq, wk, wv = wqkv.split([d * self.n_heads, d * self.n_kv_heads, d * self.n_kv_heads], dim=0)
 
-        # split wqkv matrix into Query, key and value matrices 
-        wq, wk, wv = wqkv.split([d * self.n_heads, d * self.n_kv_heads, d * self.n_kv_heads], dim=0)
-        
+            # save the wq, wk, wv matrices in state_dict
+            state_dict[prefix + "wq.weight"] = wq
+            state_dict[prefix + "wk.weight"] = wk 
+            state_dict[prefix + "wv.weight"] = wv  
+
             
