@@ -192,4 +192,6 @@ class Attention(nn.Module):
             state_dict[prefix + "wk.weight"] = wk 
             state_dict[prefix + "wv.weight"] = wv  
 
-            
+
+    def forward(self, x: torch.Tensor, start_pos: int, freqs_cis: torch.Tensor, mask: Optional[torch.Tensor] = None):
+              
