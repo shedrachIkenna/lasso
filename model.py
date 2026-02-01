@@ -199,3 +199,8 @@ class Attention(nn.Module):
 
         # Project x into Query, Key and Value by doing a matrix multiplication of the wq, wk, wk pretrained weights with x 
         xq, xk, xv = self.wq(x), self.wk(x), self.wv(x)
+
+        # Reshape x into a 4-dimensional tensor  
+        xq = xq.view(bsz, seqlen, self.n_local_heads, self.head_dim)
+        xk = xk.view(bsz, seqlen, self.n_local_kv_heads, self.head_dim)
+        xv = xv.view(bsz, seqlen, self.n_local_kv_heads, self.head_dim)
