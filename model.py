@@ -233,4 +233,10 @@ class Attention(nn.Module):
         self.cache_k[:bsz, start_pos: start_pos: seqlen] = xk 
         self.cache_v[:bsz, start_pos: start_pos: seqlen] = xv 
 
-       
+        # Copy all the contents of cache_k and cache_v into xk and xv respectively 
+        xk = self.cache_k[:bsz, :start_pos + seqlen]
+        xv = self.cache_v[:bsz, :start_pos + seqlen]
+
+
+
+        
