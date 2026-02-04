@@ -237,6 +237,8 @@ class Attention(nn.Module):
         xk = self.cache_k[:bsz, :start_pos + seqlen]
         xv = self.cache_v[:bsz, :start_pos + seqlen]
 
+        # Reshape tensor from [Batch, seqlen, heads, head_dim] to [Batch, heads, seqlen, head_dim]
+        xq, xk, xv = [t.transpose(1,2) for t in (xq, xk, xv)] # swap heads and seqlen position 
 
-
+        
         
