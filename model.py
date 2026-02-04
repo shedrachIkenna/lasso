@@ -228,3 +228,9 @@ class Attention(nn.Module):
 
         self.cache_k = self.cache_k.to(xq) # move cache_k to the device where xq is and also match cache_k dtype to xq
         self.cache_v = self.cache_v.to(xq) # move cache_v to the device where xq is and also match cache_v dtype to xq
+
+        # write contents of xk and xv to cache_xk and cache_xv respectively 
+        self.cache_k[:bsz, start_pos: start_pos: seqlen] = xk 
+        self.cache_v[:bsz, start_pos: start_pos: seqlen] = xv 
+
+       
