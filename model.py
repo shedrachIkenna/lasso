@@ -243,4 +243,15 @@ class Attention(nn.Module):
         # match the number of heads for xv and xv with the number of heads of xq 
         xk = xk.repeat_interleave(self.n_rep, dim=1)
         xv = xv.repeat_interleave(self.n_rep, dim=1)
+
+        # attention 
+        attn_output = F.scaled_dot_product_attention(xq, xk, xv, attn_mask=mask, dropout_p=0.0)
+
+        # Reshape tensor back to [Batch, seqlen, heads, head_dim] from [Batch, heads, seqlen, head_dim]
+        attn_output = attn_output.transpose(1,2).contiguous().view(bsz, seqlen, -1)
+
+        # Get output projection 
+        output = self.wo(attn_output)
+        return output
+
         
