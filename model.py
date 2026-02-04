@@ -240,5 +240,7 @@ class Attention(nn.Module):
         # Reshape tensor from [Batch, seqlen, heads, head_dim] to [Batch, heads, seqlen, head_dim]
         xq, xk, xv = [t.transpose(1,2) for t in (xq, xk, xv)] # swap heads and seqlen position 
 
-        
+        # match the number of heads for xv and xv with the number of heads of xq 
+        xk = xk.repeat_interleave(self.n_rep, dim=1)
+        xv = xv.repeat_interleave(self.n_rep, dim=1)
         
