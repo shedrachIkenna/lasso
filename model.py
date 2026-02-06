@@ -255,6 +255,15 @@ class Attention(nn.Module):
         return output
 
 class TransformerBlock(nn.Module):
+    """
+    TransformerBlock class puts together the components in a single layer of a Transformer which are: 
+        - RMSNorm
+        - Attention
+        - Residual Add (+)
+        - RMSNorm
+        - FeedForward
+        - Residual Add (+)
+    """
     def __init__(self, layer_id: int, args: ModelArgs):
         super().__init__()
         self.n_heads = args.n_heads
@@ -263,5 +272,5 @@ class TransformerBlock(nn.Module):
 
         self.is_nope_layer = args.nope_layer_interval is not None and (layer_id + 1) % args.nope_layer_interval == 0 
 
-        
+
         
