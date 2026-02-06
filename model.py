@@ -254,4 +254,14 @@ class Attention(nn.Module):
         output = self.wo(attn_output)
         return output
 
+class TransformerBlock(nn.Module):
+    def __init__(self, layer_id: int, args: ModelArgs):
+        super().__init__()
+        self.n_heads = args.n_heads
+        self.dim = args.dim 
+        self.head_dim = args.dim // args.n_heads if args.head_dim is None else args.head_dim
+
+        self.is_nope_layer = args.nope_layer_interval is not None and (layer_id + 1) % args.nope_layer_interval == 0 
+
+        
         
