@@ -268,9 +268,9 @@ class TransformerBlock(nn.Module):
         super().__init__()
         self.n_heads = args.n_heads
         self.dim = args.dim 
-        self.head_dim = args.dim // args.n_heads if args.head_dim is None else args.head_dim
+        self.head_dim = args.dim // args.n_heads if args.head_dim is None else args.head_dim # use provided head_dim if specified else use the calculation written in this line 
 
-        self.is_nope_layer = args.nope_layer_interval is not None and (layer_id + 1) % args.nope_layer_interval == 0 
+        self.is_nope_layer = args.nope_layer_interval is not None and (layer_id + 1) % args.nope_layer_interval == 0 # logic to make every 4th transformerblock a NoPe layer 
 
 
         
