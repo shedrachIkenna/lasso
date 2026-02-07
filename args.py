@@ -2,6 +2,15 @@ from pydantic import BaseModel, model_validator
 from typing import Optional
 
 
+class MoEArgs(BaseModel):
+    num_experts: int = -1, 
+    capacity_factor: float = 1.0 # capacity factor determines how many tokens each expert can choose 
+    auto_scale_F: bool = (  # noqa: N815
+        True  # if true, rescales hidden_dim such that number of activated params is same as equivalent dense layer
+    )
+    top_k: int = 1 
+    interleave_moe_layer_step: int = 1 
+
 class ModelArgs(BaseModel): # inherite all the methods from the basemodel class for data handling 
     dim: int = -1 
     n_layers: int = -1 
@@ -27,6 +36,8 @@ class ModelArgs(BaseModel): # inherite all the methods from the basemodel class 
     use_scaled_rope: bool = False 
     rope_scaling_factor: Optional[float] = None 
     rope_high_freq_factor: Optional[float] = None 
+
+
 
     max_batch_size: int = 32 
     max_seq_len: int = 2048

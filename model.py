@@ -272,5 +272,11 @@ class TransformerBlock(nn.Module):
 
         self.is_nope_layer = args.nope_layer_interval is not None and (layer_id + 1) % args.nope_layer_interval == 0 # logic to make every 4th transformerblock a NoPe layer 
 
+        use_rope = not self.is_nope_layer
+        use_qk_norm = args.use_qk_norm and not self.is_nope_layer
+
+        self.attention = Attention(args, use_rope=use_rope, use_qk_norm=use_qk_norm)
+
+        
 
         
