@@ -165,7 +165,7 @@ class Attention(nn.Module):
 
     def load_hook(self, state_dict: Dict[str, Any], prefix: str, local_metadate: Dict[str, Any], strict: bool, missing_keys: List[str], unexpected_key: List[str], error_msgs: List[str]) -> None: 
         """
-        Loads pretrained weights from file (wqkv.weight)
+        Intercepts weights files and unpacks the combined weight matrix into its individual layer weight components
 
         Args: 
             state_dict: dictionary containing all the weights in the file 
@@ -278,7 +278,7 @@ class TransformerBlock(nn.Module):
         self.attention = Attention(args, use_rope=use_rope, use_qk_norm=use_qk_norm)
 
         if args.moe_args and (layer_id + 1) % args.moe_args.interleave_moe_layer_step == 0:  # conditions for which layers will be MoE 
-            
+
             
             
         
