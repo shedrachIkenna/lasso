@@ -277,6 +277,8 @@ class TransformerBlock(nn.Module):
 
         self.attention = Attention(args, use_rope=use_rope, use_qk_norm=use_qk_norm)
 
-        
-
+        if args.moe_args and (layer_id + 1) % args.moe_args.interleave_moe_layer_step == 0:  # conditions for which layers will be MoE 
+            
+            
+            
         
