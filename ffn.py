@@ -25,3 +25,13 @@ class FeedForward(nn.Module):
             state_dict[prefix + "w1.weight"] = w1 
             state_dict[prefix + "w3.weight"] = w3
             state_dict[prefix + "w2.weight"] = state_dict.pop(prefix + "mlp.fc2_weight")
+
+    def forward(self, x):
+        """
+        SwiGLU activation implementation 
+        """
+        x = F.silu(F.linear(x, self.w1.weight)) * F.linear(x, self.w3.weight)
+        out = F.linear(x, self.w2.weight)
+        if self.do_reduce:
+            return reduce_from_model_parallel_region(out)
+        return out 
