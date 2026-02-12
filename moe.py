@@ -49,3 +49,14 @@ class Experts(nn.Module):
         )
 
         self._register_load_state_dict_pre_hook(self.load_hook)
+
+    def load_hook(self, state_dict: Dict[str, Any], prefix: str, local_metadata: Dict[str, Any], strict: bool, missing_keys: List[str], unexpected: List[str], error_msgs: List[str]) -> None: 
+        self.prefix = prefix 
+        if prefix + "moe_w_in_eD_F" in state_dict: 
+            e = self.num_local_experts
+            D = self.dim 
+            state_dict[prefix + "w1"] = state_dict.pop(prefix + "moe_w_in_eD_F").view(e, D, -1)
+            state_dict[prefix + "w2"] = state_dict.pop(prefix + "moe_w_out_eF_D").view(e, D, -1)
+            state_dict[prefix + "w3"] = state_dict.pop(prefix + "moe_w_swiglu_eD_F").view(e, D, -1)
+
+            
