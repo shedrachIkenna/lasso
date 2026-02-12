@@ -59,4 +59,12 @@ class Experts(nn.Module):
             state_dict[prefix + "w2"] = state_dict.pop(prefix + "moe_w_out_eF_D").view(e, D, -1)
             state_dict[prefix + "w3"] = state_dict.pop(prefix + "moe_w_swiglu_eD_F").view(e, D, -1)
 
-            
+    def forward(self, routed_in_egD: torch.Tensor) -> torch.Tensor: 
+        e = self.num_local_experts
+        D = self.dim
+
+        x_egD = routed_in_egD.view(e, -1, D)
+        out_egD = self.batched_swiglu(x_egD, self.w1, self.w3, self.w2)
+        out_egD = out_egD.view(-1, D)
+
+        return out_egD
