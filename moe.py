@@ -68,3 +68,7 @@ class Experts(nn.Module):
         out_egD = out_egD.view(-1, D)
 
         return out_egD
+    
+    def  batched_swiglu(self, x: Tensor, w1: Tensor, w2: Tensor, w3: Tensor) -> Tensor: 
+        middle_out_egF = F.silu(torch.bmm(x, w1)) * torch.bmm(x, w3)
+        return torch.bmm(middle_out_egF, w2)
