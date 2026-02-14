@@ -72,3 +72,30 @@ class Experts(nn.Module):
     def  batched_swiglu(self, x: Tensor, w1: Tensor, w2: Tensor, w3: Tensor) -> Tensor: 
         middle_out_egF = F.silu(torch.bmm(x, w1)) * torch.bmm(x, w3)
         return torch.bmm(middle_out_egF, w2)
+    
+class MoE(torch.nn.Module):
+    """
+    This class uses the Experts class as tool to create MoEs and is also responsible for 
+        - routing word(s) to appropriate experts which also includes 
+            - scoring 
+            - selection 
+            - gathering 
+            - merging, etc
+        - passing words to shared experts 
+        
+    Tensors used in this module are annotated with the suffixes that indicate the shape of the tensor 
+    Several commonly used annotations include: 
+    - a: bsz*slen
+    - E: number of experts
+    - e: number of local experts per ep (n_experts/ep)
+    - D: hidden dimension
+    - d: D/tp
+    - F: model dimension
+    - G: number of tokens per expert (a * capacity_factor / E)
+    - g: number of tokens per expert per TP rank (i.e., G/TP)
+
+    Examples:
+    x_aD [a, D]
+    routed_in_etG_D [et*G, D]
+    x_eGD: [e, G, D]
+    """
