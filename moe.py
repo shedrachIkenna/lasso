@@ -122,4 +122,12 @@ class MoE(torch.nn.Module):
 
         # GPU are designed to work with matrices of sizes of multiples of 8 
         hidden_dim += -hidden_dim % multiple_of # Round up the hidden_dim to the nearest multiple of 8 or 16 
-        
+
+        num_local_experts: int = moe_args.num_experts # total number of experts defined fo the model 
+
+        dtype: torch.dtype = torch.get_default_dtype()
+
+        self.experts = Experts(num_local_experts, dim, hidden_dim) # create the experts 
+
+        # create a weight matrix with will be multiplied by each word vector and the resulting matrix will be used as a sorting machine to assign words to appropriate experts 
+        self.router_DE: nn.Parameter = nn.Parameter(torch.empty(dim, moe_args.num_experts, dtype=dtype)) 
