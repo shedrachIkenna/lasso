@@ -131,3 +131,8 @@ class MoE(torch.nn.Module):
 
         # create a weight matrix with will be multiplied by each word vector and the resulting matrix will be used as a sorting machine to assign words to appropriate experts 
         self.router_DE: nn.Parameter = nn.Parameter(torch.empty(dim, moe_args.num_experts, dtype=dtype)) 
+
+        # The shared expert is used by all the words. 
+        # The idea is to have the expert learn basic stuffs like how to use a commma, basic sentence structure, etc.
+        # while allowing the expert to focus on truly difficult, niche topics (coding logic, math, creating writing, etc)
+        self.shared_expert = FeedForward(dim, hidden_dim, do_reduce=False) 
