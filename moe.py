@@ -6,7 +6,7 @@ from torch.nn import functional as F
 import fairscale.nn.model_parallel.initialize as fs_init 
 from fairscale.nn.model_parallel.mappings import reduce_from_model_parallel_region
 
-from .args import ModelArgs
+from .args import MoEArgs
 from .ffn import FeedForward
 
 def divide_exact(numerator: int, denominator: int) -> int: 
@@ -82,7 +82,7 @@ class MoE(torch.nn.Module):
             - gathering 
             - merging, etc
         - passing words to shared experts 
-        
+
     Tensors used in this module are annotated with the suffixes that indicate the shape of the tensor 
     Several commonly used annotations include: 
     - a: bsz*slen
@@ -99,3 +99,14 @@ class MoE(torch.nn.Module):
     routed_in_etG_D [et*G, D]
     x_eGD: [e, G, D]
     """
+
+    def __init__(self, dim: int, hidden_dim: int, ffn_dim_multiplier: float, multiple_of: int, moe_args: MoEArgs) -> None: 
+        super().__init__()
+        self.moe_args = moe_args # gives access to configs saved in MoEArgs class in .args 
+
+
+        hidden_dim_denom: float = 1 
+        if self.moe_args.auto_scale_F: # if capacity factor is high (meaning we are allowing many tokens to crowd one expert)
+            # then make the hidden dimension smaller to compensate for memory and compute power 
+            hidden_dim_denom = moe_args.capacity_factor + 1 # this keeps the total computational costs of the layer roughly the same 
+            
