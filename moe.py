@@ -116,5 +116,11 @@ class MoE(torch.nn.Module):
         # custom knob to increase hidden_dim if necessary 
         hidden_dim = int(ffn_dim_multiplier * hidden_dim) # acts as an override for hidden_dim 
 
+        # This is where we actually make the hidden dimensions smaller if capacity factor is high 
+        if moe_args.auto_scale_F: 
+            hidden_dim = int(hidden_dim / hidden_dim_denom)
+
+            
+
 
 
