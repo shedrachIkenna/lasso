@@ -109,4 +109,8 @@ class MoE(torch.nn.Module):
         if self.moe_args.auto_scale_F: # if capacity factor is high (meaning we are allowing many tokens to crowd one expert)
             # then make the hidden dimension smaller to compensate for memory and compute power 
             hidden_dim_denom = moe_args.capacity_factor + 1 # this keeps the total computational costs of the layer roughly the same 
-            
+
+        # multiply the hidden dimension by 2/3 to reduce it because we are using SwiGLU which uses two linear weight projections w1 and w3 
+        hidden_dim = int(2 * hidden_dim / 3) 
+
+        
