@@ -120,7 +120,6 @@ class MoE(torch.nn.Module):
         if moe_args.auto_scale_F: 
             hidden_dim = int(hidden_dim / hidden_dim_denom)
 
-            
-
-
-
+        # GPU are designed to work with matrices of sizes of multiples of 8 
+        hidden_dim += -hidden_dim % multiple_of # Round up the hidden_dim to the nearest multiple of 8 or 16 
+        
