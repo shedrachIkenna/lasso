@@ -136,3 +136,6 @@ class MoE(torch.nn.Module):
         # The idea is to have the expert learn basic stuffs like how to use a commma, basic sentence structure, etc.
         # while allowing the expert to focus on truly difficult, niche topics (coding logic, math, creating writing, etc)
         self.shared_expert = FeedForward(dim, hidden_dim, do_reduce=False) 
+
+        self._register_load_state_dict_pre_hook(self.load_hook) # run load_hook function before loading weights for compactibility 
+        
