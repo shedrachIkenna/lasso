@@ -113,4 +113,8 @@ class MoE(torch.nn.Module):
         # multiply the hidden dimension by 2/3 to reduce it because we are using SwiGLU which uses two linear weight projections w1 and w3 
         hidden_dim = int(2 * hidden_dim / 3) 
 
-        
+        # custom knob to increase hidden_dim if necessary 
+        hidden_dim = int(ffn_dim_multiplier * hidden_dim) # acts as an override for hidden_dim 
+
+
+
