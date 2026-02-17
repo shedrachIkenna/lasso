@@ -138,4 +138,9 @@ class MoE(torch.nn.Module):
         self.shared_expert = FeedForward(dim, hidden_dim, do_reduce=False) 
 
         self._register_load_state_dict_pre_hook(self.load_hook) # run load_hook function before loading weights for compactibility 
-        
+
+    def load_hook(self, state_dict: Dict[str, Any], prefix: str, local_metadata: Dict[str, Any], strict: bool, missing_keys: List[str], unexpected_keys: List[str], error_msgs: List[str]) -> None:
+        if prefix + "w_in_shared_FD.weight" in state_dict: 
+            state_dict[prefix + "shared_expert.w1.weight"] = state_dict.pop(prefix + "w_in_shared_FD.weight")
+            state_dict[prefix + "shared_expert.w3.weight"] = state_dict.pop(prefix + "w_swiglu_FD.weight")
+            state_dict[prefix + "shared_expert.w2.weight"] = state_dict.pop(prefix + "w_out_shared_DF.weight")
