@@ -151,4 +151,6 @@ class MoE(torch.nn.Module):
         x_aD = x_bsD.view(-1, D) # because we need only the token's position and the token's dimension 
 
         a = x_aD.shape[0] # get the tokens index based on the row number of the token 
-        
+
+        # multiply the flattened x input with the weight matrix of the router 
+        router_scores: Tensor = torch.matmul(x_aD, self.router_DE).transpose(0,1) 
