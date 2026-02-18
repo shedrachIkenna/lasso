@@ -144,3 +144,11 @@ class MoE(torch.nn.Module):
             state_dict[prefix + "shared_expert.w1.weight"] = state_dict.pop(prefix + "w_in_shared_FD.weight")
             state_dict[prefix + "shared_expert.w3.weight"] = state_dict.pop(prefix + "w_swiglu_FD.weight")
             state_dict[prefix + "shared_expert.w2.weight"] = state_dict.pop(prefix + "w_out_shared_DF.weight")
+
+    def forward(self, x_bsD: Tensor) -> Tensor: 
+        _, slen, D = x_bsD.shape   # unpack the dimensions into variables leaving out the batch_size (hence the "_")
+        # reshape the tensor from (B, S, D) to (BxS, D)
+        x_aD = x_bsD.view(-1, D) # because we need only the token's position and the token's dimension 
+
+        a = x_aD.shape[0] # get the tokens index based on the row number of the token 
+        
