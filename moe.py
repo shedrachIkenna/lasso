@@ -157,3 +157,7 @@ class MoE(torch.nn.Module):
         # self.router_DE shape = [D, E] = D features and E experts 
         # Perform a matrix multiplication of [a, D] * [D, E] = [a, E]
         router_scores: Tensor = torch.matmul(x_aD, self.router_DE).transpose(0,1) # transpose the result from [a, E] to [E, a]
+
+        # router_scores_aK gives us the [words_rows x top_k_expert_scores_columns]. (top_k is usually 2) 
+        # router_indices_aK gives us the [words_rows x position_indices_of_top_k_expert_scores_column]
+        router_scores_aK, router_indices_aK = torch.topk(router_scores.transpose(0, 1), self.moe_args.top_k, dim=1) 
