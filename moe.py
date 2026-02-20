@@ -150,7 +150,10 @@ class MoE(torch.nn.Module):
         # reshape the tensor from (B, S, D) to (BxS, D)
         x_aD = x_bsD.view(-1, D) # because we need only the token's position and the token's dimension 
 
-        a = x_aD.shape[0] # get the tokens index based on the row number of the token 
+        a = x_aD.shape[0] # Get the (BxS) component of (BxS, D)
 
         # multiply the flattened x input with the weight matrix of the router 
-        router_scores: Tensor = torch.matmul(x_aD, self.router_DE).transpose(0,1) 
+        # x_aD shape = [a, D] = a words with D features 
+        # self.router_DE shape = [D, E] = D features and E experts 
+        # Perform a matrix multiplication of [a, D] * [D, E] = [a, E]
+        router_scores: Tensor = torch.matmul(x_aD, self.router_DE).transpose(0,1) # transpose the result from [a, E] to [E, a]
