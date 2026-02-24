@@ -175,3 +175,8 @@ class MoE(torch.nn.Module):
         # The grid doesn't contain weights, it contains addresses [indexes] [0, 1, 2, 3, ..., a] rows duplicated E times 
         # Example if a = 27, E = 8, router_indices = [8, 27] matrices with addresses 
         router_indices = torch.arange(a, device=x_aD.device).view(1, -1).expand(router_scores.size(0), -1)
+
+        # turns the -inf in router_scores to zero 
+        router_scores = torch.sigmoid(router_scores)
+
+        
