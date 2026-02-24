@@ -160,11 +160,15 @@ class MoE(torch.nn.Module):
 
         # router_scores_aK gives us the [words_rows x top_k_expert_scores_columns]. (top_k is usually 2) 
         # router_indices_aK gives us the [words_rows x position_indices_of_top_k_expert_scores_column]
+        # outputs: router_indices_aK = [a, 2], router_indices_aK = [a, 2]
+        # where a = number of words in rows 
+        # 2 represents the indices of the top k = 2 experts in router_indices_aK
+        # 2 represents the scores of the top k = 2 experts in router_scores_aK
         router_scores_aK, router_indices_aK = torch.topk(router_scores.transpose(0, 1), self.moe_args.top_k, dim=1) 
 
         # create a weight matrix like router_scores and transpose it 
-        # replace the columns and row values it that from the router_indices_aK and router_scores_aK values.
+        # replace the corresponding values using router_scores_aK values based on router_indices_aK
         # The other values are -inf 
         router_scores = torch.full_like(router_scores.transpose(0, 1), float("-inf")).scatter_(1, router_indices_aK, router_scores_aK).transpose(0, 1)
-
+        
         
