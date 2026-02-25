@@ -193,3 +193,6 @@ class MoE(torch.nn.Module):
         # pass the input x shape [a, D] into the shared expert 
         out_aD = self.shared_expert(x_aD)
 
+        # expert logic in action from class Experts 
+        # detach function is very important: It means that the expert should stick tuning its weights to become a better expert only.
+        routed_out_eg_D = self.experts(routed_in_EG_D.detach())
