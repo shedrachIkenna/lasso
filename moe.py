@@ -180,8 +180,8 @@ class MoE(torch.nn.Module):
         # router_scores = [a, E]
         router_scores = torch.sigmoid(router_scores)
 
-        # flattens the router_indices matrix [8, 27] into one column [216, 1]
-        # it also stretches (expand) it from  [216, 1] to [216, 10] ([216, D]) # check notebook for clarity 
+        # flattens the router_indices matrix [8, 27] into one column [216, 1] ([a*E, 1])
+        # it also stretches (expand) it from  [216, 1] to [216, 10] ([a*E, D]) # check notebook for clarity 
         # routed_in_EG_D = [a*E, D]
         routed_in_EG_D: Tensor = torch.gather(x_aD, dim=0, index=router_indices.reshape(-1, 1).expand(-1, D))
 
@@ -189,3 +189,7 @@ class MoE(torch.nn.Module):
         # routed_in_EG_D = [a*E, D] * [a*E, 1]
         # routed_in_EG_D = [a*E, D]
         routed_in_EG_D = routed_in_EG_D * router_scores.reshape(-1, 1)
+
+        # pass the input x shape [a, D] into the shared expert 
+        out_aD = self.shared_expert(x_aD)
+
