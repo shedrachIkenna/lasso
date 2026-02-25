@@ -177,6 +177,15 @@ class MoE(torch.nn.Module):
         router_indices = torch.arange(a, device=x_aD.device).view(1, -1).expand(router_scores.size(0), -1)
 
         # turns the -inf in router_scores to zero 
+        # router_scores = [a, E]
         router_scores = torch.sigmoid(router_scores)
 
-        
+        # flattens the router_indices matrix [8, 27] into one column [216, 1]
+        # it also stretches (expand) it from  [216, 1] to [216, 10] ([216, D]) # check notebook for clarity 
+        # routed_in_EG_D = [a*E, D]
+        routed_in_EG_D: Tensor = torch.gather(x_aD, dim=0, index=router_indices.reshape(-1, 1).expand(-1, D))
+
+        # router_scores.reshape(-1, 1) is flattened into one column = [a*E, 1]
+        # routed_in_EG_D = [a*E, D] * [a*E, 1]
+        # routed_in_EG_D = [a*E, D]
+        routed_in_EG_D = routed_in_EG_D * router_scores.reshape(-1, 1)
