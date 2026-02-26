@@ -202,3 +202,6 @@ class MoE(torch.nn.Module):
 
         # add expert (computed) data to the out_aD (input x)
         out_aD.scatter_add_(dim=0, index=router_indices_EG_D, src=routed_out_eg_D)
+
+        # Perform sum reduction: sums all the results from experts across all GPUs 
+        out_aD = reduce_from_model_parallel_region(out_aD)
