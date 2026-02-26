@@ -196,3 +196,9 @@ class MoE(torch.nn.Module):
         # expert logic in action from class Experts 
         # detach function is very important: It means that the expert should stick tuning its weights to become a better expert only.
         routed_out_eg_D = self.experts(routed_in_EG_D.detach())
+
+        # Similar to routed_in_EG_D but router_indices_EG_D contains the addresses (position indices) 
+        router_indices_EG_D = router_indices.reshape(-1, 1).expand(-1, D)
+
+        # add expert (computed) data to the out_aD (input x)
+        out_aD.scatter_add_(dim=0, index=router_indices_EG_D, src=routed_out_eg_D)
