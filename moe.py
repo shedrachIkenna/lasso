@@ -205,3 +205,6 @@ class MoE(torch.nn.Module):
 
         # Perform sum reduction: sums all the results from experts across all GPUs 
         out_aD = reduce_from_model_parallel_region(out_aD)
+
+        # Reshape out_aD back into 3D shape: from [batch*seqlen, model_dim] to [batch, seqlen, model_dim]
+        return out_aD.view(-1, slen, D)
