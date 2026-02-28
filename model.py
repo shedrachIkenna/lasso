@@ -13,6 +13,8 @@ from fairscale.nn.model_parallel.layers import (
 )
 
 from .args import ModelArgs
+from .moe import MoE
+from .ffn import FeedForward
 
 def rmsnorm(x, eps):
     def _norm(y):
@@ -278,7 +280,20 @@ class TransformerBlock(nn.Module):
         self.attention = Attention(args, use_rope=use_rope, use_qk_norm=use_qk_norm)
 
         if args.moe_args and (layer_id + 1) % args.moe_args.interleave_moe_layer_step == 0:  # condition that decides which layers will be MoE (experts layer)
+            self.feed_forward = MoE(
+                dim = args.dim, 
+                hidden_dim=int(args.ffn_exp * args.dim), 
+                ffn_dim_multiplier=args.ffn_dim_multiplier, 
+                multiple_of=args.multiple_of, 
+                moe_args=args.moe_args,
+            )
+        else:
+            hidden_dim = int(4 * args.dim)
+            hidden_dim = int(2 * hidden_dim / 3)
+            if args.ffn_dim_multiplier is not None: 
+                hidden_dim = int(args.ffn_dim_multiplier * hidden_dim)
+            hidden_dim = args.multiple_of * ((hidden_dim + args.multiple_of - 1) // args.multiple_of)
 
-            
+            self.feed_forward = FeedForward(dim=args.dim, hidden_dim=hidden_dim)
             
         
