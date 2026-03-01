@@ -183,6 +183,7 @@ class MoE(torch.nn.Module):
         # flattens the router_indices matrix [8, 27] into one column [216, 1] ([a*E, 1])
         # it also stretches (expand) it from  [216, 1] to [216, 10] ([a*E, D]) # check notebook for clarity 
         # routed_in_EG_D = [a*E, D]
+        # The goal is to fill the router_indices matrix with the main values from x_aD 
         routed_in_EG_D: Tensor = torch.gather(x_aD, dim=0, index=router_indices.reshape(-1, 1).expand(-1, D))
 
         # router_scores.reshape(-1, 1) is flattened into one column = [a*E, 1]
