@@ -304,5 +304,20 @@ class TransformerBlock(nn.Module):
 
     def load_hook(self, state_dict: Dict[str, Any], prefix: str, local_metadata: Dict[str, Any], strict: bool,
                   missing_keys: List[str], unexpected_keys: List[str], error_msgs: List[str]) -> None: 
+        if prefix + "attention.wqkv.layer_norm_weight" in state_dict: 
+            state_dict[prefix + "attention_norm.weight"] = state_dict.pop(prefix + "attention.wqkv.layer_norm_weight")
         
+        if prefix + "feed_forward.mlp.layer_norm_weight" in state_dict: 
+            state_dict[prefix + "ffn_norm.weight"] = state_dict.pop(prefix + "feed_forward.mlp.layer_norm_weight")
+        elif prefix + "feed_forward.norm.weight" in state_dict: 
+            state_dict[prefix + "ffn_norm.weight"] = state_dict.pop(prefix + "feed_forward.norm.weight")
+        
+        for k in (
+            "feed_forward.experts.mlp", 
+            "feed_forward.mlp_shared", 
+            'attention.wo', 
+            "attention.wqkv"
+        ):
+            if prefix + k + "._extra_state" in state_dict: 
+                state_dict.pop(prefix + k + "._extra_state")
         
