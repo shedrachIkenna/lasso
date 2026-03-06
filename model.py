@@ -301,4 +301,8 @@ class TransformerBlock(nn.Module):
         self.ffn_norm = RMSNorm(args.dim, eps=args.norm_eps)
 
         self._register_load_state_dict_pre_hook(self.load_hook)
+
+    def load_hook(self, state_dict: Dict[str, Any], prefix: str, local_metadata: Dict[str, Any], strict: bool,
+                  missing_keys: List[str], unexpected_keys: List[str], error_msgs: List[str]) -> None: 
+        
         
