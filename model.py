@@ -295,5 +295,10 @@ class TransformerBlock(nn.Module):
             hidden_dim = args.multiple_of * ((hidden_dim + args.multiple_of - 1) // args.multiple_of)
 
             self.feed_forward = FeedForward(dim=args.dim, hidden_dim=hidden_dim)
-            
+        
+        self.layer_id = layer_id
+        self.attention_norm = RMSNorm(args.dim, eps=args.norm_eps)
+        self.ffn_norm = RMSNorm(args.dim, eps=args.norm_eps)
+
+        self._register_load_state_dict_pre_hook(self.load_hook)
         

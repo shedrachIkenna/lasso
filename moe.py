@@ -171,7 +171,7 @@ class MoE(torch.nn.Module):
         # The other values are -inf 
         router_scores = torch.full_like(router_scores.transpose(0, 1), float("-inf")).scatter_(1, router_indices_aK, router_scores_aK).transpose(0, 1)
         
-        # create an identical grid of the router_scores matrix [8, 27]
+        # creates an identical grid of the router_scores matrix [8, 27]
         # The grid doesn't contain weights, it contains addresses [indexes] [0, 1, 2, 3, ..., a] rows duplicated E times 
         # Example if a = 27, E = 8, router_indices = [8, 27] matrices with addresses 
         router_indices = torch.arange(a, device=x_aD.device).view(1, -1).expand(router_scores.size(0), -1)
