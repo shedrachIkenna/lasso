@@ -331,4 +331,16 @@ class TransformerBlock(nn.Module):
         h = x + self.attention(self.attention_norm(x), start_pos, freqs_cis, mask)
         out = h + self.feed_forward(self.ffn_norm(h))
         return out
+    
+
+class Transformer(nn.Module): 
+    def __init__(self, args: ModelArgs, **kwargs) -> None: 
+        super().__init__()
+
+        self.args = args
+        self.vocab_size = args.vocab_size
+        self.n_layers = args.n_layers 
+        self.tok_embeddings = VocabParallelEmbedding(args.vocab_size, args.dim, init_method=lambda x: x)
+        self.layers = torch.nn.ModuleList()
+        
         
