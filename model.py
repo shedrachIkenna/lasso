@@ -355,3 +355,17 @@ class Transformer(nn.Module):
             # Each new layer is added to a list of layers (self.layers)
             # A n_layer = 12 will be a 12-layered architecture transformer 
             self.layers.append(TransformerBlock(layer_id, args)) # Each layer comprises of the components in one instance of the TransformerBlock class 
+
+        self.norm = RMSNorm(args.dim, eps=args.norm_eps) # normalization 
+        # For every token, it produces 128,000 scores. The index with the highest score is the word the model predicts. 
+        self.output = ColumnParallelLinear(args.dim, args.vocab_size, bias=False, init_method=lambda x: x) 
+
+        self.freqs_cis = precompute_freqs_cis( # rope positinal encoding 
+            args.dim // args.n_heads, 
+            args.max_seq_len * 2, 
+            args.rope_theta, 
+            args.use_scaled_rope, 
+            args.rope_scaling_factor, 
+            args.rope_high_freq_factor,
+        )
+
