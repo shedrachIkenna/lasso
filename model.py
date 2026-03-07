@@ -334,6 +334,14 @@ class TransformerBlock(nn.Module):
     
 
 class Transformer(nn.Module): 
+    """
+    Puts together all the multiple layers the the token passes through. from the moment the token enters the model as a raw
+    number to the moment it exits as a prediction. 
+        -> Converts tokens to embeddings 
+        -> Decides if an input is a word or a pixel and attends to it as appropriate 
+        -> Applies attention mask (causal mask using triangular matrix)
+        -> Convert final vector into the next predicted word 
+    """
     def __init__(self, args: ModelArgs, **kwargs) -> None: 
         super().__init__()
 
@@ -343,4 +351,7 @@ class Transformer(nn.Module):
         self.tok_embeddings = VocabParallelEmbedding(args.vocab_size, args.dim, init_method=lambda x: x)
         self.layers = torch.nn.ModuleList()
         
-        
+        for layer_id in range(args.n_layers): # loops through the number of defined n_layers 
+            # Each new layer is added to a list of layers (self.layers)
+            # A n_layer = 12 will be a 12-layered architecture transformer 
+            self.layers.append(TransformerBlock(layer_id, args)) # Each layer comprises of the components in one instance of the TransformerBlock class 
