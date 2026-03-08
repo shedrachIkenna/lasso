@@ -11,6 +11,23 @@ class MoEArgs(BaseModel):
     top_k: int = 1 
     interleave_moe_layer_step: int = 1 
 
+class Size(BaseModel): 
+    height: int 
+    width: int 
+
+class VisionArgs(BaseModel):
+    image_size: Size 
+    patch_size: Size 
+
+    # parameter for encoder transformer 
+    dim: int 
+    n_layers: int 
+    n_heads: int 
+    mlp_ratio: float
+    output_dim: int 
+
+    pixel_shuffle_ratio: float
+
 class ModelArgs(BaseModel): # inherite all the methods from the basemodel class for data handling 
     dim: int = -1 
     n_layers: int = -1 
