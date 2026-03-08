@@ -54,6 +54,7 @@ class ModelArgs(BaseModel): # inherite all the methods from the basemodel class 
     rope_scaling_factor: Optional[float] = None 
     rope_high_freq_factor: Optional[float] = None 
 
+    vision_args: Optional[VisionArgs] = None 
     moe_args: Optional[MoEArgs] = None 
 
     max_batch_size: int = 32 

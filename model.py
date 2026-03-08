@@ -369,5 +369,5 @@ class Transformer(nn.Module):
             args.rope_high_freq_factor,
         )
 
-        
+        vision_args = self.args.vision_args 
 
