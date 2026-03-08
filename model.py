@@ -369,5 +369,9 @@ class Transformer(nn.Module):
             args.rope_high_freq_factor,
         )
 
-        vision_args = self.args.vision_args 
+        vision_args = self.args.vision_args
+        if vision_args: 
+            # circular import otherwise we will have to refactor the attention class 
+            # Or move the attention class to a seperate file 
+            
 
