@@ -25,3 +25,9 @@ class PixelShuffle(nn.Module):
         x = pixel_shuffle_op(x, ps_ratio=self.ps_ratio) # [B, hh, ww, C] -> [B, hh/2, ww/2, 4C]
         pixel_shuffle_patches = x.reshape(x.shape[0], -1, x.shape[-1]) # [B, hh, ww, C] to [B, ((hh/2) * (ww/2), 4C]
         return pixel_shuffle_patches
+    
+def pixel_shuffle_op(input_x, ps_ratio): 
+    """
+    Logic: Think of this like folding a piece of paper in half vertically, then folding it in half horizontally. 
+            The result is a smaller square with four layers thick 
+    """
