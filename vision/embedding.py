@@ -31,9 +31,25 @@ def pixel_shuffle_op(input_x, ps_ratio):
     Logic: Think of this like folding a piece of paper in half vertically, then folding it in half horizontally. 
             The result is a smaller square with four layers thick 
     """
-    n, w, h, c = input_x.size()
+    n, w, h, c = input_x.size() 
     input_x = input_x.view(n, w, int(h * ps_ratio), int(c / ps_ratio))
     input_x = input_x.permute(0, 2, 1, 3).contiguous()
     input_x = input_x.view(n, int(h * ps_ratio), int(w * ps_ratio), int(c / (ps_ratio * ps_ratio)))
     input_x = input_x.permute(0, 2, 1, 3).contiguous()
     return input_x
+
+class SimpleMLP(torch.nn.Module): 
+    def __init__(self, dim: int, hidden_dim: int, bias: bool = True, dropout: float = 0.0, act_layer: Callable = nn.GELU):
+        super().__init__()
+
+        # Projects tokens to higher (hidden_dim) dimensions. Also split the weight matrix vertically (by columns)
+        self.c_fc = ColumnParallelLinear(dim, hidden_dim, bias=bias, gather_output=False)
+
+        # out projection (note that its dimension is still the same allowing the model to capture more complex relationships)
+        self.c_proj = RowParallelLinear(hidden_dim, hidden_dim, bias=bias, input_is_parallel=True)
+
+        # model activation function : GELU 
+        self.non_linearity = act_layer()
+
+        # Regularization to prevent overfitting
+        self.drop_out = dropout
