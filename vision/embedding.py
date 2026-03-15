@@ -53,3 +53,9 @@ class SimpleMLP(torch.nn.Module):
 
         # Regularization to prevent overfitting
         self.drop_out = dropout
+    
+    def forward(self, x): 
+        hidden = self.c_fc(x)
+        hidden = self.non_linearity(hidden)
+        hidden = F.dropout(hidden, p=self.drop_out, training=self.training)
+        return self.non_linearity(self.c_proj(hidden))
