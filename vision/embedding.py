@@ -59,3 +59,6 @@ class SimpleMLP(torch.nn.Module):
         hidden = self.non_linearity(hidden)
         hidden = F.dropout(hidden, p=self.drop_out, training=self.training)
         return self.non_linearity(self.c_proj(hidden))
+
+class PixelShuffleMLP(torch.nn.Module):
+    
