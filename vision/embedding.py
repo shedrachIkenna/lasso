@@ -61,4 +61,7 @@ class SimpleMLP(torch.nn.Module):
         return self.non_linearity(self.c_proj(hidden))
 
 class PixelShuffleMLP(torch.nn.Module):
+    """
+    Joins PixelShuffle and SimpleMLP class logic into a one pipeline 
+    """
     
