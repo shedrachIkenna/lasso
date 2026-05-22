@@ -64,4 +64,8 @@ class PixelShuffleMLP(torch.nn.Module):
     """
     Joins PixelShuffle and SimpleMLP class logic into a one pipeline 
     """
-    
+    def __init__(self, ps_ratio: float, input_dim: int, output_dim: 4096, add_fc: bool = False):
+        super().__init__()
+        self.pixel_shuffle = PixelShuffle(ps_ratio) # create and save an instance of the PixelShuffle class 
+        
+        self.mlp = SimpleMLP(int(input_dim // (ps_ratio**2)), output_dim, bias=False, dropout=0.0, act_layer=nn.GELU)
